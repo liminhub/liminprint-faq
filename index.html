@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>里民承印 · 里問我答</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Noto+Serif+TC:wght@400;600&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #faf9f7; --white: #ffffff; --black: #1e1e1e; --dark: #2c2c2c;
+  --gray: #888580; --gray-lt: #c8c5be; --border: #e8e5de; --border-lt: #f0ede6;
+  --warm: #b5845a; --accent: #3d3530;
+  --tag-blue: #eef3fb; --tag-blue-t: #3a5fa8;
+  --tag-green: #eef7f1; --tag-green-t: #2a6e44;
+  --tag-yellow: #fdf8ec; --tag-yellow-t: #7a5e10;
+  --tag-orange: #fdf2ea; --tag-orange-t: #a04a10;
+  --tag-red: #fdf0ee; --tag-red-t: #a03020;
+  --tag-pink: #fdf0f8; --tag-pink-t: #903070;
+}
+body { font-family: 'Noto Sans TC', sans-serif; background: var(--bg); min-height: 100vh; color: var(--black); font-weight: 300; }
+.header { background: var(--white); border-bottom: 1px solid var(--border); padding: 0 32px; position: sticky; top: 0; z-index: 100; }
+.header-brand { display: flex; align-items: center; gap: 10px; padding: 18px 0 14px; border-bottom: 1px solid var(--border-lt); }
+.brand-logo { font-family: 'Noto Serif TC', serif; font-size: 13px; font-weight: 600; letter-spacing: 0.15em; color: var(--dark); }
+.brand-sep { color: var(--gray-lt); }
+.brand-sub { font-size: 11px; color: var(--gray); letter-spacing: 0.08em; }
+.search-area { padding: 14px 0 0; }
+.search-input-wrap { position: relative; margin-bottom: 12px; }
+.search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--gray-lt); font-size: 14px; }
+.search-box { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: 3px; padding: 10px 16px 10px 38px; font-family: 'Noto Sans TC', sans-serif; font-size: 13px; font-weight: 300; color: var(--black); outline: none; transition: border 0.2s; }
+.search-box::placeholder { color: var(--gray-lt); }
+.search-box:focus { border-color: var(--warm); background: var(--white); }
+.filters { display: flex; gap: 6px; flex-wrap: wrap; padding-bottom: 14px; }
+.filter-btn { font-family: 'Noto Sans TC', sans-serif; font-size: 11px; font-weight: 400; padding: 4px 12px; border-radius: 2px; border: 1px solid var(--border); background: var(--white); color: var(--gray); cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+.filter-btn:hover { border-color: var(--warm); color: var(--warm); }
+.filter-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 500; }
+.main { max-width: 720px; margin: 0 auto; padding: 28px 20px 80px; }
+.status-bar { font-size: 11px; color: var(--gray); margin-bottom: 18px; letter-spacing: 0.06em; min-height: 18px; }
+.qa-list { display: flex; flex-direction: column; gap: 6px; }
+.qa-card { background: var(--white); border: 1px solid var(--border); overflow: hidden; transition: border-color 0.15s; }
+.qa-card:hover { border-color: var(--gray-lt); }
+.qa-card.open { border-color: var(--warm); }
+.qa-question { display: flex; align-items: flex-start; gap: 14px; padding: 16px 18px; cursor: pointer; user-select: none; }
+.qa-q-icon { font-family: 'Noto Serif TC', serif; font-size: 13px; font-weight: 600; color: var(--warm); flex-shrink: 0; margin-top: 1px; }
+.qa-q-text { font-size: 13px; font-weight: 500; line-height: 1.65; flex: 1; color: var(--dark); }
+.qa-q-text mark { background: #fef5dc; color: inherit; border-radius: 2px; padding: 0 2px; }
+.qa-chevron { font-size: 9px; color: var(--gray-lt); transition: transform 0.25s; flex-shrink: 0; margin-top: 5px; }
+.qa-card.open .qa-chevron { transform: rotate(180deg); color: var(--warm); }
+.qa-body { display: none; border-top: 1px solid var(--border-lt); }
+.qa-card.open .qa-body { display: block; }
+.qa-answer { padding: 14px 18px 14px 46px; font-size: 13px; line-height: 1.9; color: #555; font-weight: 300; }
+.qa-answer mark { background: #fef5dc; color: inherit; border-radius: 2px; padding: 0 2px; }
+.qa-footer { padding: 6px 18px 12px 46px; }
+.cat-tag { font-size: 10px; padding: 2px 8px; border-radius: 2px; font-weight: 400; letter-spacing: 0.04em; }
+.cat-服務與諮詢 { background: var(--tag-blue); color: var(--tag-blue-t); }
+.cat-檔案與印前 { background: var(--tag-green); color: var(--tag-green-t); }
+.cat-製程與規格 { background: var(--tag-yellow); color: var(--tag-yellow-t); }
+.cat-後加工 { background: var(--tag-orange); color: var(--tag-orange-t); }
+.cat-付款與交期 { background: var(--tag-red); color: var(--tag-red-t); }
+.cat-貼紙專區 { background: var(--tag-pink); color: var(--tag-pink-t); }
+.empty { text-align: center; padding: 60px 20px; color: var(--gray); }
+.empty-icon { font-size: 28px; margin-bottom: 14px; opacity: 0.4; }
+.empty-title { font-size: 14px; font-weight: 500; margin-bottom: 6px; color: var(--dark); }
+.empty-sub { font-size: 12px; line-height: 1.7; }
+.loading { text-align: center; padding: 60px 20px; color: var(--gray); font-size: 12px; letter-spacing: 0.12em; }
+.dot-anim::after { content: ''; animation: dots 1.4s steps(4,end) infinite; }
+@keyframes dots { 0%{content:''} 25%{content:'·'} 50%{content:'··'} 75%{content:'···'} }
+.error-box { background: #fdf5f0; border: 1px solid #f0d0c0; border-radius: 3px; padding: 16px 20px; font-size: 13px; color: #7a3820; line-height: 1.7; }
+.footer { text-align: center; padding: 24px; font-size: 10px; color: var(--gray-lt); letter-spacing: 0.1em; border-top: 1px solid var(--border-lt); margin-top: 20px; }
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-brand">
+    <span class="brand-logo">里民承印</span>
+    <span class="brand-sep">·</span>
+    <span class="brand-sub">里問我答 LIMINPRINT FAQ</span>
+  </div>
+  <div class="search-area">
+    <div class="search-input-wrap">
+      <span class="search-icon">🔍</span>
+      <input class="search-box" id="searchInput" type="text" placeholder="輸入關鍵字，例如：Canva、運費、急件、燙金…" autocomplete="off">
+    </div>
+    <div class="filters" id="filterBar">
+      <button class="filter-btn active" data-cat="全部">全部</button>
+      <button class="filter-btn" data-cat="服務與諮詢">服務與諮詢</button>
+      <button class="filter-btn" data-cat="檔案與印前">檔案與印前</button>
+      <button class="filter-btn" data-cat="製程與規格">製程與規格</button>
+      <button class="filter-btn" data-cat="後加工">後加工</button>
+      <button class="filter-btn" data-cat="付款與交期">付款與交期</button>
+      <button class="filter-btn" data-cat="貼紙專區">貼紙專區</button>
+    </div>
+  </div>
+</div>
+<div class="main">
+  <div class="status-bar" id="statusBar"></div>
+  <div id="qaList"></div>
+  <div class="footer">LIMINPRINT · 新北市泰山區貴鳳街3號5樓 · LINE @liminprint</div>
+</div>
+<script>
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRfDli4puRedGovDVCQBynrr3TMivtMBi-r_b859RyzEQ2cj3gOOBY8LkXV4M8rkTrH2O7_YataDOaj/pub?gid=2098172509&single=true&output=csv';
+
+let allData = [], currentCat = '全部', currentQuery = '';
+
+function parseCSV(text) {
+  const lines = text.split('\n');
+  const headers = lines[0].split(',');
+  return lines.slice(1).filter(l => l.trim()).map(line => {
+    const vals = [];
+    let cur = '', inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"' && !inQ) { inQ = true; }
+      else if (ch === '"' && inQ) {
+        if (line[i+1] === '"') { cur += '"'; i++; }
+        else { inQ = false; }
+      } else if (ch === ',' && !inQ) { vals.push(cur); cur = ''; }
+      else { cur += ch; }
+    }
+    vals.push(cur);
+    return {
+      question: vals[0] || '',
+      answer:   vals[1] || '',
+      category: vals[2] || '',
+      keywords: vals[3] || '',
+    };
+  }).filter(d => d.question);
+}
+
+async function loadData() {
+  const list = document.getElementById('qaList');
+  list.innerHTML = '<div class="loading">資料載入中<span class="dot-anim"></span></div>';
+  try {
+    const res = await fetch(CSV_URL);
+    if (!res.ok) throw new Error('無法取得資料');
+    const text = await res.text();
+    allData = parseCSV(text);
+    render();
+  } catch(e) {
+    list.innerHTML = `<div class="error-box">⚠️ 載入失敗：${e.message}<br><small>請確認網路連線並重新整理頁面。</small></div>`;
+  }
+}
+
+function hl(text, q) {
+  if (!q) return text;
+  const esc = q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  return text.replace(new RegExp(esc,'gi'), m => `<mark>${m}</mark>`);
+}
+
+function render() {
+  const q = currentQuery.trim().toLowerCase();
+  let filtered = allData;
+  if (currentCat !== '全部') filtered = filtered.filter(d => d.category === currentCat);
+  if (q) filtered = filtered.filter(d =>
+    d.question.toLowerCase().includes(q) ||
+    d.answer.toLowerCase().includes(q) ||
+    d.keywords.toLowerCase().includes(q)
+  );
+  document.getElementById('statusBar').textContent =
+    (q || currentCat !== '全部') ? `找到 ${filtered.length} 筆結果` : `共 ${allData.length} 筆問答`;
+  const list = document.getElementById('qaList');
+  if (filtered.length === 0) {
+    list.innerHTML = `<div class="empty"><div class="empty-icon">🤔</div><div class="empty-title">找不到符合的問題</div><div class="empty-sub">試試其他關鍵字，或切換分類看看<br>也可以直接聯繫客服 LINE @liminprint</div></div>`;
+    return;
+  }
+  list.innerHTML = filtered.map((d,i) => `
+    <div class="qa-card" id="card-${i}">
+      <div class="qa-question" onclick="toggle(${i})">
+        <span class="qa-q-icon">Q</span>
+        <span class="qa-q-text">${hl(d.question, currentQuery.trim())}</span>
+        <span class="qa-chevron">▼</span>
+      </div>
+      <div class="qa-body">
+        <div class="qa-answer">${hl(d.answer, currentQuery.trim()).replace(/\n/g,'<br>')}</div>
+        <div class="qa-footer"><span class="cat-tag cat-${d.category}">${d.category}</span></div>
+      </div>
+    </div>`).join('');
+}
+
+function toggle(i) { document.getElementById(`card-${i}`).classList.toggle('open'); }
+
+let timer;
+document.getElementById('searchInput').addEventListener('input', e => {
+  currentQuery = e.target.value;
+  clearTimeout(timer);
+  timer = setTimeout(render, 180);
+});
+document.getElementById('filterBar').addEventListener('click', e => {
+  const btn = e.target.closest('.filter-btn');
+  if (!btn) return;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentCat = btn.dataset.cat;
+  render();
+});
+loadData();
+</script>
+</body>
+</html>
